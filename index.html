@@ -30,11 +30,13 @@
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Nguyen Tran","alternateName":"nguyntp","jobTitle":"Offline Editor","address":{"@type":"PostalAddress","addressLocality":"Ho Chi Minh City","addressCountry":"VN"},"email":"mailto:djnguyentran@gmail.com","sameAs":["https://vimeo.com/user224678740","https://www.youtube.com/@nguyntpdodp","https://www.instagram.com/r3ndervault"]}</script>
 <style>
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
 body{margin:0;background:var(--color-bg)}
 a{color:var(--color-accent)}
 a:hover{color:var(--color-accent-600)}
 </style>
+<style>@property --bts-fade { syntax: "<length>"; inherits: false; initial-value: 0px; }</style>
+
 </helmet>
 <div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
 
@@ -63,7 +65,7 @@ a:hover{color:var(--color-accent-600)}
   </div>
   <div style="padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider);border-left:2px solid var(--color-divider)">
     <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Roles</div>
-    <p style="margin:0;font-size:17px;line-height:1.45">Offline editor<br>Colorist<br>Cinematographer</p>
+    <p style="margin:0;font-size:17px;line-height:1.45">Offline editor<br>Online editor<br>Colorist<br>Cinematographer</p>
   </div>
   <div style="padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider);border-left:2px solid var(--color-divider)">
     <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Trusted by</div>
@@ -82,7 +84,7 @@ a:hover{color:var(--color-accent-600)}
   </div>
   <div style="position:relative;width:80%;margin:0 auto;aspect-ratio:16/9;background:var(--color-neutral-900)">
     <sc-if value="{{ reelIsFrame }}" hint-placeholder-val="{{ false }}">
-      <iframe src="{{ reelSrc }}" title="{{ reelTitle }}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+      <iframe src="{{ reelSrc }}" title="{{ reelTitle }}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
     </sc-if>
     <sc-if value="{{ reelIsVideo }}" hint-placeholder-val="{{ true }}">
       <video key="{{ reelSrc }}" src="{{ reelSrc }}" poster="{{ reelPoster }}" controls="true" playsInline="true" preload="metadata" title="{{ reelTitle }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
@@ -135,7 +137,7 @@ a:hover{color:var(--color-accent-600)}
       <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
         <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
           <sc-if value="{{ b.playing }}" hint-placeholder-val="{{ false }}">
-            <video key="{{ b.key }}" src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" onPlay="{{ b.onPlay }}" onEnded="{{ b.stop }}" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
+            <video key="{{ b.key }}" src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" onPlay="{{ b.onPlay }}" onEnded="{{ b.stop }}" ref="{{ b.fadeIn }}" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
           </sc-if>
           <sc-if value="{{ b.idle }}" hint-placeholder-val="{{ true }}">
             <button onClick="{{ b.play }}" aria-label="Play {{ b.title }}" style="all:unset;position:absolute;inset:0;cursor:pointer" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
@@ -156,12 +158,48 @@ a:hover{color:var(--color-accent-600)}
       </figure>
     </sc-for>
   </div>
+  <sc-if value="{{ hasBtsExtra }}" hint-placeholder-val="{{ true }}">
+  <div ref="{{ btsExtraRef }}" style="height:{{ btsH }};overflow:hidden;--bts-fade:{{ btsFade }};transition:height 1.4s cubic-bezier(0.65,0,0.35,1), --bts-fade 0.7s ease-in-out;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%)">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))">
+    <sc-for list="{{ btsExtra }}" as="b" hint-placeholder-count="0">
+      <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="opacity:{{ b.op }};transform:scale({{ b.sc }});transform-origin:50% 0;transition:opacity 0.7s ease-in-out {{ b.delay }}, transform 0.9s cubic-bezier(0.65,0,0.35,1) {{ b.delay }}, background 0.2s;margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
+        <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
+          <sc-if value="{{ b.playing }}" hint-placeholder-val="{{ false }}">
+            <video key="{{ b.key }}" src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" onPlay="{{ b.onPlay }}" onEnded="{{ b.stop }}" ref="{{ b.fadeIn }}" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
+          </sc-if>
+          <sc-if value="{{ b.idle }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ b.play }}" aria-label="Play {{ b.title }}" style="all:unset;position:absolute;inset:0;cursor:pointer" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
+              <img src="{{ b.poster }}" alt="{{ b.title }}, behind the scenes edited by Nguyen Tran" loading="lazy" decoding="async" width="1280" height="720" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+              <sc-if value="{{ b.mount }}" hint-placeholder-val="{{ false }}">
+                <video src="{{ b.src }}" autoPlay="true" muted="true" loop="true" playsInline="true" tabindex="-1" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none"></video>
+              </sc-if>
+              <span style="position:absolute;left:var(--space-3);bottom:var(--space-3);padding:var(--space-1) var(--space-2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:var(--color-accent);color:var(--color-bg)">Play with sound</span>
+            </button>
+          </sc-if>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:var(--space-3);font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">
+          <span style="color:var(--color-accent-700)">{{ b.num }}</span>
+          <span>{{ b.year }}</span>
+        </div>
+        <h3 style="margin:0;font-size:20px;line-height:1.15">{{ b.title }}</h3>
+        <figcaption style="margin:0;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-neutral-700)">{{ b.meta }}</figcaption>
+      </figure>
+    </sc-for>
+  </div>
+  </div>
+  <div style="display:flex;padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider)">
+    <button class="btn btn-secondary" onClick="{{ toggleBts }}" aria-expanded="{{ btsOpenStr }}">{{ btsLabel }}</button>
+  </div>
+  </sc-if>
 </section>
 
 <section id="about" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));border-bottom:2px solid var(--color-divider);scroll-margin-top:64px">
   <div style="padding:48px var(--space-8)">
     <h2 style="margin:0 0 var(--space-2);font-size:32px">About</h2>
     <div style="font-size:14px;color:var(--color-neutral-700)">Nguyen T.P. or nguyntp<br>Offline Editor &amp; Filmmaker — Saigon, Vietnam</div>
+    <div style="position:relative;width:100%;max-width:360px;aspect-ratio:4/5;margin-top:var(--space-6);background:var(--color-surface)">
+      <img src="ntpssd/seo/nguyen-tran-offline-editor-saigon-portrait.webp?v=2" alt="Nguyen Tran, offline editor and filmmaker in Saigon, on set" loading="lazy" decoding="async" width="680" height="850" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    </div>
   </div>
   <div style="padding:48px var(--space-8);border-left:2px solid var(--color-divider);display:flex;flex-direction:column;gap:var(--space-4)">
     <p style="margin:0;font-size:19px;line-height:1.5;text-wrap:pretty;max-width:56ch">Trusted by leading brands including Coca-Cola, Tiger, and Jules.</p>
@@ -203,23 +241,24 @@ a:hover{color:var(--color-accent-600)}
 </footer>
 
 <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
-  <div role="dialog" aria-modal="true" aria-label="{{ active.title }}" style="position:fixed;inset:0;z-index:20;background:var(--color-bg);overflow-y:auto">
-    <div style="position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-8);background:var(--color-bg);border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
+  <div aria-hidden="true" style="position:fixed;inset:0;z-index:19;background:var(--color-bg);opacity:{{ modalOpacity }};transition:opacity 0.7s ease-in-out;will-change:opacity"></div>
+  <div role="dialog" aria-modal="true" aria-label="{{ active.title }}" style="position:fixed;inset:0;z-index:20;overflow-y:auto;overscroll-behavior:contain">
+    <div style="opacity:{{ cOp }};transition:opacity 0.4s ease-in-out {{ cDelayH }};position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-8);background:var(--color-bg);border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
       <span style="font-size:13px;color:var(--color-accent-700);font-variant-numeric:tabular-nums">{{ active.num }} / {{ projectCount }}</span>
       <span style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-right:auto">{{ active.title }}</span>
       <button class="btn btn-secondary" onClick="{{ prev }}">Previous</button>
       <button class="btn btn-secondary" onClick="{{ next }}">Next</button>
       <button class="btn btn-primary" onClick="{{ close }}">Close</button>
     </div>
-    <article style="padding:48px var(--space-8)">
+    <article style="padding:48px var(--space-8);opacity:{{ cOp }};transform:translateY({{ cY }});transition:opacity 0.5s ease-out {{ cDelayA }}, transform 0.7s cubic-bezier(0.2,0.7,0.2,1) {{ cDelayA }}">
       <div style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-3)">{{ active.role }} · {{ active.year }}</div>
       <h2 style="margin:0 0 var(--space-8);font-size:clamp(40px,6vw,80px);line-height:0.95;letter-spacing:-0.03em">{{ active.title }}</h2>
-      <div style="display:grid;grid-template-columns:{{ mediaCols }};gap:var(--space-6);width:80%;margin:0 auto">
+      <div style="display:grid;grid-template-columns:{{ mediaCols }};gap:var(--space-6);width:80%;margin:0 auto;justify-content:center;opacity:{{ swapOp }};transition:opacity 0.35s ease-in-out" ref="{{ mediaRef }}">
         <sc-for list="{{ activeMedia }}" as="m" hint-placeholder-count="1">
           <figure style="margin:0">
             <div style="position:relative;aspect-ratio:{{ m.ratio }};background:var(--color-neutral-900)">
               <sc-if value="{{ m.isFrame }}">
-                <iframe src="{{ m.src }}" title="{{ m.label }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+                <iframe src="{{ m.src }}" title="{{ m.label }}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
               </sc-if>
               <sc-if value="{{ m.isVideo }}">
                 <video src="{{ m.src }}" poster="{{ m.poster }}" controls="true" playsInline="true" preload="metadata" title="{{ m.label }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
@@ -234,7 +273,7 @@ a:hover{color:var(--color-accent-600)}
           </div>
         </sc-if>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-8);margin-top:var(--space-8);padding-top:var(--space-6);border-top:2px solid var(--color-divider)">
+      <div style="opacity:{{ swapOp }};transition:opacity 0.35s ease-in-out;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-8);margin-top:var(--space-8);padding-top:var(--space-6);border-top:2px solid var(--color-divider)">
         <div>
           <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-3)">Editor's note</div>
           <sc-for list="{{ activeNotes }}" as="n" hint-placeholder-count="1">
@@ -254,6 +293,7 @@ a:hover{color:var(--color-accent-600)}
     </article>
   </div>
 </sc-if>
+<img ref="{{ flyRef }}" alt="" aria-hidden="true" style="position:fixed;z-index:21;left:0;top:0;width:0;height:0;object-fit:cover;display:none;pointer-events:none;transform-origin:0 0;will-change:transform,opacity">
 
 </div>
 </x-dc>
@@ -312,8 +352,8 @@ class Component extends DCLogic {
       notes: [], credits: [["Script", "An Vu"], ["Director/DOP", "Nguyen Tran"], ["Editor/Colorist", "Nguyen Tran"]] },
     { slug: "khan-teaser", title: "KHAN — Short Film Teaser", role: "Director, Editor, DOP, Colorist", year: "2024",
       thumb: "khan-short-film-teaser-dop-editor-nguyen-tran", preview: { id: 1064998327, r: 2 },
-      media: [{ v: 1064998327, ratio: "2/1", label: "Teaser — Short Film Khan" }, { v: 1026225018, ratio: "2/1", label: "My version — inspired by Oppenheimer" }, { v: 1026228533, ratio: "2/1", label: "How it's made" }, { v: 1026241856, ratio: "2/1", label: "How it's made" }],
-      notes: ["Unnamed short film. Shot September 2024.", "This short film serves as a practice piece for honing my filmmaking skills, including directing, editing, cinematography, color grading, VFX compositing, and sound design.", "The lighting setup in this scene is quite simple, in fact, there was no light at all. Since this is a zero-budget film, I didn't use any additional lighting throughout. All the light comes from the windows on either side of the actor, with the door in the background providing some backlighting.", "One scene is inspired by Christopher Nolan's Oppenheimer. It mirrors the moment where Oppenheimer grapples with his inner turmoil following the bombing. I've done some replication of the sound design from the Oppenheimer scene — turn the sound on. Color grading is different.", "The script was written by my friend, Buu Thach. I added a few small details to align with my vision, directing style, cinematography, and editing. Shot on Sony a6500 and iPhone."],
+      media: [{ v: 1064998327, ratio: "2/1", label: "Teaser — Short Film Khan" }],
+      notes: ["Unnamed short film. Shot September 2024.", "This short film serves as a practice piece for honing my filmmaking skills, including directing, editing, cinematography, color grading, VFX compositing, and sound design.", "The lighting setup in this scene is quite simple, in fact, there was no light at all. Since this is a zero-budget film, I didn't use any additional lighting throughout. All the light comes from the windows on either side of the actor, with the door in the background providing some backlighting.", "One scene is inspired by Christopher Nolan's Oppenheimer. It mirrors the moment where Oppenheimer grapples with his inner turmoil following the bombing. I've done some replication of the sound design from the Oppenheimer scene - turn the sound on. Color grading is different.", "The script was written by my friend, Buu Thach. I added a few small details to align with my vision, directing style, cinematography, and editing. Shot on Sony a6500 and iPhone."],
       credits: [["Script/PM", "Buu Thach"], ["Producer", "Nguyen Tran"], ["Director/DOP", "Nguyen Tran"], ["Editor/Colorist", "Nguyen Tran"], ["VFX/SFX", "Nguyen Tran"]] },
     { slug: "beanthere-cafe-ii-tvc", title: "Beanthere Cafe II TVC", role: "Director, Editor, DOP, Colorist", year: "2023",
       thumb: "beanthere-coffee-ii-tvc-director-editor-colorist-nguyen-tran", preview: { id: 1034721500, r: 2 },
@@ -342,10 +382,120 @@ class Component extends DCLogic {
     if (i >= 0) this.setActive(i);
   }
   workRef = React.createRef();
-  componentWillUnmount() { window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
+  componentWillUnmount() { this.clearTimers(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
+  mediaRef = React.createRef();
+  vp() { const d = document.documentElement; return { W: d.clientWidth, H: d.clientHeight }; }
+  tileRect(i) {
+    const grid = this.workRef && this.workRef.current;
+    const el = grid && grid.querySelectorAll("a[href]")[i];
+    const r = el && (el.querySelector("div") || el).getBoundingClientRect();
+    const { H } = this.vp();
+    return r && r.bottom > 0 && r.top < H ? { l: r.left, t: r.top, w: r.width, h: r.height } : null;
+  }
+  targetRect() {
+    const g = this.mediaRef.current;
+    const box = g && g.firstElementChild && (g.firstElementChild.querySelector("div") || g.firstElementChild);
+    const r = box && box.getBoundingClientRect();
+    const { W, H } = this.vp();
+    if (r && r.width && r.bottom > 0 && r.top < H) return { l: r.left, t: r.top, w: r.width, h: r.height };
+    const w = W * 0.8; return { l: (W - w) / 2, t: (H - w * 9 / 16) / 2, w, h: w * 9 / 16 };
+  }
+  flyRef = React.createRef();
+  fit(box, ar) { let w = box.w, hh = w / ar; if (hh > box.h) { hh = box.h; w = hh * ar; } return { l: box.l + (box.w - w) / 2, t: box.t + (box.h - hh) / 2, w, h: hh }; }
+  xf(from, to) { const s = from.w / to.w; return `translate(${from.l - to.l}px, ${from.t - to.t}px) scale(${s})`; }
+  placeFly(src, r) { const f = this.flyRef.current; if (!f) return null; if (f.getAttribute("src") !== src) f.src = src;
+    Object.assign(f.style, { display: "block", left: r.l + "px", top: r.t + "px", width: r.w + "px", height: r.h + "px", opacity: "1", transform: "none" }); return f; }
+  hideFly() { const f = this.flyRef.current; if (f) { f.getAnimations().forEach(a => a.cancel()); f.style.display = "none"; } }
+  centerRect(r) { const { W, H } = this.vp(); const w = r.w * 0.5, hh = r.h * 0.5; return { l: (W - w) / 2, t: (H - hh) / 2, w, h: hh }; }
+  later(fn, ms) { const t = setTimeout(fn, ms); (this.timers = this.timers || []).push(t); }
+  clearTimers() { (this.timers || []).forEach(clearTimeout); this.timers = []; }
+  fadeInRef = el => { if (el && el.animate) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, easing: "ease-in-out" }); };
+  btsExtraRef = React.createRef();
+  btsItem(b, i, hoverOn) {
+    const playing = this.state.btsPlay === i;
+    return { ...b, num: String(i + 1).padStart(2, "0"), src: this.mp4(b.file), poster: this.img(b.file), fadeIn: this.fadeInRef,
+      playing, idle: !playing, mount: hoverOn && !playing && this.state.btsHover === i,
+      key: "bts-" + i, play: () => this.setState({ btsPlay: i, btsHover: -1 }),
+      stop: () => this.setState(s => (s.btsPlay === i ? { btsPlay: -1 } : null)),
+      onPlay: e => { document.querySelectorAll("video[controls]").forEach(v => { if (v !== e.target) v.pause(); }); if (this.state.btsPlay !== i) this.setState({ btsPlay: i }); },
+      enter: () => this.setState({ btsHover: i }),
+      leave: () => this.setState(s => (s.btsHover === i ? { btsHover: -1 } : null)) };
+  }
+  btsVals(hoverOn) {
+    const N = 6, open = !!this.state.btsOpen, cols = this.state.btsCols || 3;
+    const extra = this.btsData.slice(N).map((b, j) => {
+      const row = Math.floor(j / cols), col = j % cols;
+      return { ...this.btsItem(b, j + N, hoverOn), op: open ? 1 : 0, sc: open ? 1 : 0.86,
+        delay: open ? (0.15 + row * 0.35 + col * 0.08).toFixed(2) + "s" : "0s" };
+    });
+    const h = this.state.btsH;
+    return {
+      bts: this.btsData.slice(0, N).map((b, i) => this.btsItem(b, i, hoverOn)),
+      btsExtra: extra, hasBtsExtra: extra.length > 0,
+      btsH: h == null ? "0px" : h, btsOpenStr: String(open),
+      btsFade: this.state.btsAnim ? "220px" : "0px",
+      btsLabel: open ? "Show less" : `More behind the scenes (${extra.length})`,
+      btsExtraRef: this.btsExtraRef, toggleBts: () => this.toggleBts()
+    };
+  }
+  toggleBts() {
+    const el = this.btsExtraRef.current; if (!el) return;
+    clearTimeout(this.btsTimer); clearTimeout(this.btsTimer2);
+    const full = el.scrollHeight;
+    if (!this.state.btsOpen) {
+      const cols = Math.max(1, Math.floor(el.clientWidth / 400));
+      this.setState({ btsOpen: true, btsAnim: true, btsH: full + "px", btsCols: cols });
+      this.btsTimer = setTimeout(() => this.setState({ btsAnim: false }), 1000);
+      this.btsTimer2 = setTimeout(() => this.setState({ btsH: "auto" }), 1750);
+    } else {
+      if (this.state.btsPlay >= 6) this.setState({ btsPlay: -1 });
+      this.setState({ btsH: full + "px", btsAnim: true });
+      requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ btsOpen: false, btsH: "0px" })));
+      this.btsTimer = setTimeout(() => this.setState({ btsAnim: false }), 1500);
+    }
+  }
   setActive(i) {
-    this.setState({ active: i, hover: -1 });
-    document.body.style.overflow = i >= 0 ? "hidden" : "";
+    const EASE = "cubic-bezier(0.65,0,0.35,1)", MOVE = 700;
+    const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.clearTimers();
+    const seq = (this.seq = (this.seq || 0) + 1), live = () => this.seq === seq;
+    if (i < 0) {
+      const a = this.state.active; if (a < 0) return;
+      const tile = this.tileRect(a);
+      this.setState({ cOp: 0 });
+      if (reduce) { this.setState({ shown: false }); this.later(() => this.setState({ active: -1, hover: -1 }), 400); return; }
+      const ar = tile ? tile.w / tile.h : 16 / 9;
+      const to = this.fit(this.targetRect(), ar);
+      const f = this.placeFly(this.img(this.data[a].thumb), to);
+      f.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, easing: "ease-out" }).finished.then(() => {
+        if (!live()) return;
+        this.setState({ shown: false, mediaReady: false });
+        const end = tile ? [{ transform: "none" }, { transform: this.xf(tile, to) }]
+                         : [{ transform: "none", opacity: 1 }, { transform: `translate(${to.w * 0.25}px, ${to.h * 0.25}px) scale(0.5)`, opacity: 0 }];
+        return f.animate(end, { duration: MOVE, easing: EASE, fill: "forwards" }).finished;
+      }).then(() => { if (!live()) return; this.setState({ active: -1, hover: -1 }); requestAnimationFrame(() => this.hideFly()); }).catch(() => {});
+    } else if (this.state.active < 0) {
+      document.querySelectorAll("video[controls]").forEach(v => v.pause());
+      const tile = reduce ? null : this.tileRect(i);
+      this.setState({ active: i, shown: false, cOp: 0, mediaReady: !tile, btsPlay: -1, btsHover: -1 }, () => {
+        if (!tile) { requestAnimationFrame(() => this.setState({ shown: true, cOp: 1, mediaReady: true })); return; }
+        const to = this.fit(this.targetRect(), tile.w / tile.h);
+        const f = this.placeFly(this.img(this.data[i].thumb), to);
+        const anim = f.animate([{ transform: this.xf(tile, to) }, { transform: "none" }], { duration: MOVE, easing: EASE, fill: "both" });
+        anim.ready.then(() => live() && this.setState({ shown: true }));
+        anim.finished.then(() => {
+          if (!live()) return;
+          this.setState({ cOp: 1, mediaReady: true });
+          return f.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, delay: 500, easing: "ease-in-out", fill: "forwards" }).finished;
+        }).then(() => live() && this.hideFly()).catch(() => {});
+      });
+    } else {
+      this.setState({ swapOp: 0 });
+      this.later(() => {
+        if (!live()) return;
+        this.setState({ active: i, hover: -1, mediaReady: true }, () => requestAnimationFrame(() => requestAnimationFrame(() => live() && this.setState({ swapOp: 1 }))));
+      }, 350);
+    }
     try { history.replaceState(null, "", i >= 0 ? "#" + this.data[i].slug : "#work"); } catch (e) {}
   }
   step(d) {
@@ -375,29 +525,24 @@ class Component extends DCLogic {
       };
     });
     const a = this.state.active >= 0 ? projects[this.state.active] : null;
-    const media = a ? a.media.map(m => ({ ratio: m.ratio, label: m.label, isVideo: !!m.mp4, isFrame: !m.mp4, src: m.mp4 ? this.mp4(m.mp4) : this.vimeo(m.v), poster: m.mp4 ? this.img(m.mp4) : "" })) : [];
+    const ready = this.state.mediaReady !== false;
+    const media = a ? a.media.map(m => ({ ratio: m.ratio, label: m.label, isVideo: ready && !!m.mp4, isFrame: ready && !m.mp4, src: m.mp4 ? this.mp4(m.mp4) : this.vimeo(m.v), poster: m.mp4 ? this.img(m.mp4) : "" })) : [];
     const reel = this.reels[this.state.reel];
     const reelVals = { reelIsVideo: !!reel.mp4, reelIsFrame: !reel.mp4, reelSrc: reel.mp4 ? this.mp4(reel.mp4) : this.vimeo(reel.id), reelPoster: reel.mp4 ? this.img(reel.mp4) : "" };
     return {
       reels: this.reels.map((r, i) => ({ title: r.title, bg: i === this.state.reel ? "var(--color-accent)" : "transparent", fg: i === this.state.reel ? "var(--color-bg)" : "var(--color-text)", select: () => this.setState({ reel: i }) })),
       ...reelVals, reelTitle: reel.title, multiReel: this.reels.length > 1,
       projects, workRef: this.workRef,
-      bts: this.btsData.map((b, i) => {
-        const playing = this.state.btsPlay === i;
-        return { ...b, num: String(i + 1).padStart(2, "0"), src: this.mp4(b.file), poster: this.img(b.file),
-          playing, idle: !playing, mount: hoverOn && !playing && this.state.btsHover === i,
-          key: "bts-" + i, play: () => this.setState({ btsPlay: i, btsHover: -1 }),
-          stop: () => this.setState(s => (s.btsPlay === i ? { btsPlay: -1 } : null)),
-          onPlay: e => { document.querySelectorAll("video[controls]").forEach(v => { if (v !== e.target) v.pause(); }); if (this.state.btsPlay !== i) this.setState({ btsPlay: i }); },
-          enter: () => this.setState({ btsHover: i }),
-          leave: () => this.setState(s => (s.btsHover === i ? { btsHover: -1 } : null)) };
-      }),
+      ...this.btsVals(hoverOn),
       projectCount: String(projects.length).padStart(2, "0"),
       gridCols: `repeat(auto-fill,minmax(min(100%,${Math.round(1200 / cols)}px),1fr))`,
-      hasActive: !!a,
+      hasActive: !!a, modalOpacity: this.state.shown ? 1 : 0, mediaRef: this.mediaRef,
+      cOp: this.state.cOp ?? 1, swapOp: this.state.swapOp ?? 1, cY: (this.state.cOp ?? 1) ? "0px" : "16px",
+      cDelayH: (this.state.cOp ?? 1) ? "0.15s" : "0s", cDelayA: "0s",
+      flyRef: this.flyRef,
       active: a || {},
       activeMedia: media, activeNoMedia: !!a && !media.length,
-      mediaCols: a && a.vertical ? "repeat(auto-fill,minmax(240px,380px))" : "minmax(0,1fr)",
+      mediaCols: a && a.vertical ? "repeat(auto-fit,minmax(240px,380px))" : "minmax(0,1fr)",
       activeNotes: a ? a.notes : [],
       activeCredits: a ? a.credits.map(([role, name]) => ({ role, name })) : [],
       close: () => this.setActive(-1),
