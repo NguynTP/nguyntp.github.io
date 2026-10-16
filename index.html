@@ -38,6 +38,7 @@ a:hover{color:var(--color-accent-600)}
 <style>@property --bts-fade { syntax: "<length>"; inherits: false; initial-value: 0px; }</style>
 
 </helmet>
+<div ref="{{ introRef }}" aria-hidden="true" style="position:fixed;inset:0;z-index:100;background:var(--color-neutral-900);pointer-events:none"></div>
 <div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
 
 <nav style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:var(--space-6);padding:var(--space-3) var(--space-8);background:var(--color-bg);border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
@@ -74,21 +75,13 @@ a:hover{color:var(--color-accent-600)}
 </header>
 
 <section id="reel" style="padding:48px var(--space-8);border-bottom:2px solid var(--color-divider);scroll-margin-top:64px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap">
-    <h2 style="margin:0;font-size:32px">Editor's Reel</h2>
-    <sc-if value="{{ multiReel }}" hint-placeholder-val="{{ false }}"><div style="display:flex;border:2px solid var(--color-divider)">
-      <sc-for list="{{ reels }}" as="r" hint-placeholder-count="2">
-        <button onClick="{{ r.select }}" style="all:unset;cursor:pointer;padding:var(--space-2) var(--space-4);font-size:13px;background:{{ r.bg }};color:{{ r.fg }}" style-focus="outline:2px solid var(--color-accent);outline-offset:2px">{{ r.title }}</button>
-      </sc-for>
-    </div></sc-if>
-  </div>
-  <div style="position:relative;width:80%;margin:0 auto;aspect-ratio:16/9;background:var(--color-neutral-900)">
-    <sc-if value="{{ reelIsFrame }}" hint-placeholder-val="{{ false }}">
-      <iframe src="{{ reelSrc }}" title="{{ reelTitle }}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
-    </sc-if>
-    <sc-if value="{{ reelIsVideo }}" hint-placeholder-val="{{ true }}">
-      <video key="{{ reelSrc }}" src="{{ reelSrc }}" poster="{{ reelPoster }}" controls="true" playsInline="true" preload="metadata" title="{{ reelTitle }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
-    </sc-if>
+  <div ref="{{ reelBoxRef }}" style="position:relative;width:85%;margin:0 auto;height:36vw;overflow:hidden;background:var(--color-neutral-900)">
+    <video ref="{{ reelVidRef }}" src="{{ reelSrc }}" poster="{{ reelPoster }}" autoPlay="true" muted="true" loop="true" playsInline="true" preload="auto" controls="{{ reelOpen }}" onEnded="{{ reelEnded }}" title="{{ reelTitle }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+    <button ref="{{ reelOverRef }}" onClick="{{ openReel }}" aria-label="Play Editor's Reel with sound" style="all:unset;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-4);cursor:pointer;background:oklch(0.16 0.01 40 / 0.62);opacity:1" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
+      <span style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-bg)">Nguyen Tran — Offline Editor</span>
+      <h2 style="margin:0;font-size:clamp(40px,7vw,104px);line-height:0.95;letter-spacing:-0.03em;color:var(--color-bg);text-align:center">Editor's Reel</h2>
+      <span style="padding:var(--space-1) var(--space-3);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;background:var(--color-accent);color:var(--color-bg)">Play with sound</span>
+    </button>
   </div>
 </section>
 
@@ -225,8 +218,8 @@ a:hover{color:var(--color-accent-600)}
 </footer>
 
 <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
-  <div aria-hidden="true" style="position:fixed;inset:0;z-index:19;background:var(--color-bg);opacity:{{ modalOpacity }};transition:opacity 0.7s ease-in-out;will-change:opacity"></div>
-  <div role="dialog" aria-modal="true" aria-label="{{ active.title }}" style="position:fixed;inset:0;z-index:20;overflow-y:auto;overscroll-behavior:contain">
+  <div ref="{{ backRef }}" aria-hidden="true" style="position:fixed;inset:0;z-index:19;background:var(--color-bg);opacity:{{ modalOpacity }};transition:opacity 0.7s ease-in-out;will-change:opacity"></div>
+  <div ref="{{ dialogRef }}" role="dialog" aria-modal="true" aria-label="{{ active.title }}" style="position:fixed;inset:0;z-index:20;overflow-y:auto;overscroll-behavior:contain">
     <div style="opacity:{{ cOp }};transition:opacity 0.4s ease-in-out {{ cDelayH }};position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-8);background:var(--color-bg);border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
       <span style="font-size:13px;color:var(--color-accent-700);font-variant-numeric:tabular-nums">{{ active.num }} / {{ projectCount }}</span>
       <span style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-right:auto">{{ active.title }}</span>
@@ -240,7 +233,7 @@ a:hover{color:var(--color-accent-600)}
       <div style="display:grid;grid-template-columns:{{ mediaCols }};gap:var(--space-6);width:80%;margin:0 auto;justify-content:center;opacity:{{ swapOp }};transition:opacity 0.35s ease-in-out" ref="{{ mediaRef }}">
         <sc-for list="{{ activeMedia }}" as="m" hint-placeholder-count="1">
           <figure style="margin:0">
-            <div style="position:relative;aspect-ratio:{{ m.ratio }};background:var(--color-neutral-900)">
+            <div style="position:relative;aspect-ratio:{{ m.ratio }};background:var(--color-neutral-900);box-shadow:0 30px 70px -24px oklch(0.2 0.01 40 / 0.45), 0 8px 24px -12px oklch(0.2 0.01 40 / 0.3)">
               <sc-if value="{{ m.isFrame }}">
                 <iframe src="{{ m.src }}" title="{{ m.label }}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
               </sc-if>
@@ -277,7 +270,14 @@ a:hover{color:var(--color-accent-600)}
     </article>
   </div>
 </sc-if>
-<img ref="{{ flyRef }}" alt="" aria-hidden="true" style="position:fixed;z-index:21;left:0;top:0;width:0;height:0;object-fit:cover;display:none;pointer-events:none;transform-origin:0 0;will-change:transform,opacity">
+<sc-if value="{{ btsBigOn }}" hint-placeholder-val="{{ false }}">
+  <div ref="{{ btsBackRef }}" onClick="{{ closeBts }}" aria-hidden="true" style="position:fixed;inset:0;z-index:30;background:var(--color-bg);opacity:0;cursor:zoom-out"></div>
+  <div ref="{{ btsBoxRef }}" role="dialog" aria-label="{{ btsBigTitle }}" style="box-shadow:0 30px 70px -24px oklch(0.2 0.01 40 / 0.45), 0 8px 24px -12px oklch(0.2 0.01 40 / 0.3);position:fixed;z-index:31;left:0;top:0;width:0;height:0;overflow:hidden;background:var(--color-neutral-900)">
+    <video ref="{{ btsBigVidRef }}" src="{{ btsBigSrc }}" poster="{{ btsBigPoster }}" controls="true" autoPlay="true" playsInline="true" onEnded="{{ closeBts }}" title="{{ btsBigTitle }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--color-neutral-900)"></video>
+  </div>
+</sc-if>
+<div ref="{{ veilRef }}" aria-hidden="true" style="position:fixed;inset:0;z-index:19;background:var(--color-bg);opacity:0;visibility:hidden;pointer-events:none;will-change:opacity"></div>
+<img ref="{{ flyRef }}" alt="" aria-hidden="true" style="box-shadow:0 30px 70px -24px oklch(0.2 0.01 40 / 0.45), 0 8px 24px -12px oklch(0.2 0.01 40 / 0.3);position:fixed;z-index:21;left:0;top:0;width:0;height:0;object-fit:cover;visibility:hidden;opacity:0;pointer-events:none;transform-origin:0 0;will-change:left,top,width,height,opacity">
 
 </div>
 </x-dc>
@@ -344,9 +344,34 @@ class Component extends DCLogic {
       media: [{ v: 1034721500, ratio: "2/1", label: "Beanthere Coffee II" }],
       notes: [], credits: [["Director", "Nguyen Tran"], ["DOP", "Nguyen Tran"], ["Editor/Colorist", "Nguyen Tran"]] }
   ];
+  introRef = React.createRef();
+  runIntro() {
+    const cover = this.introRef.current; if (!cover) return;
+    const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cs = getComputedStyle(document.documentElement);
+    const dark = cs.getPropertyValue("--color-neutral-900").trim() || "#1a1817", light = cs.getPropertyValue("--color-bg").trim() || "#f3f2f2";
+    const root = cover.parentElement;
+    const nav = root.querySelector("nav"), header = root.querySelector("header");
+    const parts = [nav, ...(header ? Array.from(header.children) : []), ...["#reel", "#work", "#bts", "#about", "#contact", "footer"].map(s => root.querySelector(s))].filter(Boolean);
+    const BG = reduce ? 0 : 2800, T0 = reduce ? 0 : BG - 400;
+    parts.forEach((el, k) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduce ? 1 : 1200, delay: T0 + (k < 1 ? 0 : 250 + Math.min(k, 6) * 220 + Math.max(0, k - 6) * 150), easing: "ease-out", fill: "backwards" }));
+    cover.animate([{ backgroundColor: dark }, { backgroundColor: light }], { duration: BG || 1, easing: "cubic-bezier(0.45,0,0.55,1)", fill: "forwards" })
+      .finished.then(() => { cover.style.display = "none"; }).catch(() => { cover.style.display = "none"; });
+  }
   componentDidMount() {
+    this.runIntro();
+    this.onDocDown = e => { if (this.state.reelOpen && this.reelBoxRef.current && !this.reelBoxRef.current.contains(e.target)) this.reelEnded(); };
+    this.onDocPlay = e => { if (this.state.reelOpen && e.target !== this.reelVidRef.current && e.target.tagName === "VIDEO" && e.target.controls) this.reelEnded(); };
+    document.addEventListener("pointerdown", this.onDocDown, true);
+    this.onBtsScroll = () => { if (this.state.btsBig >= 0 && !this.btsClosing && Math.abs(scrollY - this.btsY) > 60) this.closeBts(); };
+    window.addEventListener("scroll", this.onBtsScroll, { passive: true });
+    this.reelIO = new IntersectionObserver(([en]) => { if (en.intersectionRatio < 0.3) this.reelCollapseNow(); }, { threshold: [0, 0.3] });
+    if (this.reelBoxRef.current) this.reelIO.observe(this.reelBoxRef.current);
+    document.addEventListener("play", this.onDocPlay, true);
+    this.reelRO = new ResizeObserver(([en]) => { const w = Math.round(en.contentRect.width); if (w !== this.state.reelW) this.setState({ reelW: w }, () => this.reelFit()); }); if (this.reelBoxRef.current) this.reelRO.observe(this.reelBoxRef.current);
     this.btsRO = new ResizeObserver(() => this.btsLayout()); if (this.btsGridRef.current) this.btsRO.observe(this.btsGridRef.current); requestAnimationFrame(() => this.btsLayout());
     this.onKey = e => {
+      if (e.key === "Escape" && this.state.btsBig >= 0) return this.closeBts();
       if (this.state.active < 0) return;
       if (e.key === "Escape") this.setActive(-1);
       if (e.key === "ArrowRight") this.step(1);
@@ -367,7 +392,7 @@ class Component extends DCLogic {
     if (i >= 0) this.setActive(i);
   }
   workRef = React.createRef();
-  componentWillUnmount() { this.clearTimers(); if (this.btsRO) this.btsRO.disconnect(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
+  componentWillUnmount() { this.clearTimers(); window.removeEventListener("scroll", this.onBtsScroll); if (this.reelIO) this.reelIO.disconnect(); cancelAnimationFrame(this.reelRaf); document.removeEventListener("pointerdown", this.onDocDown, true); document.removeEventListener("play", this.onDocPlay, true); if (this.reelRO) this.reelRO.disconnect(); if (this.btsRO) this.btsRO.disconnect(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
   mediaRef = React.createRef();
   vp() { const d = document.documentElement; return { W: d.clientWidth, H: d.clientHeight }; }
   tileRect(i) {
@@ -388,9 +413,9 @@ class Component extends DCLogic {
   flyRef = React.createRef();
   fit(box, ar) { let w = box.w, hh = w / ar; if (hh > box.h) { hh = box.h; w = hh * ar; } return { l: box.l + (box.w - w) / 2, t: box.t + (box.h - hh) / 2, w, h: hh }; }
   xf(from, to) { const s = from.w / to.w; return `translate(${from.l - to.l}px, ${from.t - to.t}px) scale(${s})`; }
-  placeFly(src, r) { const f = this.flyRef.current; if (!f) return null; if (f.getAttribute("src") !== src) f.src = src;
-    Object.assign(f.style, { display: "block", left: r.l + "px", top: r.t + "px", width: r.w + "px", height: r.h + "px", opacity: "1", transform: "none" }); return f; }
-  hideFly() { const f = this.flyRef.current; if (f) { f.getAnimations().forEach(a => a.cancel()); f.style.display = "none"; } }
+  placeFly(src, r) { const f = this.flyRef.current; if (!f) return null; cancelAnimationFrame(f._raf); f.getAnimations().forEach(x => x.cancel()); if (f.getAttribute("src") !== src) f.src = src;
+    Object.assign(f.style, { visibility: "visible", left: r.l + "px", top: r.t + "px", width: r.w + "px", height: r.h + "px", opacity: "1", transform: "none" }); return f; }
+  hideFly() { const f = this.flyRef.current; if (f) { f.getAnimations().forEach(a => a.cancel()); f.style.visibility = "hidden"; f.style.opacity = "0"; } }
   centerRect(r) { const { W, H } = this.vp(); const w = r.w * 0.5, hh = r.h * 0.5; return { l: (W - w) / 2, t: (H - hh) / 2, w, h: hh }; }
   later(fn, ms) { const t = setTimeout(fn, ms); (this.timers = this.timers || []).push(t); }
   clearTimers() { (this.timers || []).forEach(clearTimeout); this.timers = []; }
@@ -399,11 +424,90 @@ class Component extends DCLogic {
     const playing = this.state.btsPlay === i;
     return { ...b, num: String(i + 1).padStart(2, "0"), src: this.mp4(b.file), poster: this.img(b.file), fadeIn: this.fadeInRef,
       playing, idle: !playing, mount: hoverOn && !playing && this.state.btsHover === i,
-      key: "bts-" + i, play: () => this.setState({ btsPlay: i, btsHover: -1 }),
+      key: "bts-" + i, play: e => this.openBts(i, e.currentTarget),
       stop: () => this.setState(s => (s.btsPlay === i ? { btsPlay: -1 } : null)),
       onPlay: e => { document.querySelectorAll("video[controls]").forEach(v => { if (v !== e.target) v.pause(); }); if (this.state.btsPlay !== i) this.setState({ btsPlay: i }); },
       enter: () => this.setState({ btsHover: i }),
       leave: () => this.setState(s => (s.btsHover === i ? { btsHover: -1 } : null)) };
+  }
+  reelBoxRef = React.createRef();
+  reelVidRef = React.createRef();
+  reelOverRef = React.createRef();
+  reelSizes() { const w = this.state.reelW || (this.reelBoxRef.current ? this.reelBoxRef.current.clientWidth : 0); return { c: Math.round(Math.max(240, w * 0.36)), o: Math.round(w * 9 / 16) }; }
+  reelFit() {
+    const box = this.reelBoxRef.current; if (!box || this.reelBusy) return;
+    const { c, o } = this.reelSizes(); box.style.transition = "none"; box.style.height = (this.state.reelOpen ? o : c) + "px";
+  }
+  reelAnim(open, done) {
+    const box = this.reelBoxRef.current, ov = this.reelOverRef.current; if (!box) return done();
+    const { c, o } = this.reelSizes(), from = open ? c : o, to = open ? o : c, DUR = 1100;
+    const r = box.getBoundingClientRect(), keep = r.bottom > 0 && r.top < innerHeight, y0 = scrollY;
+    const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    box.style.transition = "none"; box.style.height = from + "px";
+    if (ov) { ov.style.pointerEvents = open ? "none" : "auto"; ov.style.transition = open ? "opacity 0.5s ease-in-out" : "opacity 0.7s ease-in-out 0.4s"; ov.style.opacity = open ? "0" : "1"; }
+    const t0 = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - t0) / DUR), hh = from + (to - from) * ease(t);
+      box.style.height = hh + "px";
+      if (keep) window.scrollTo({ top: y0 + (hh - from) / 2, behavior: "instant" });
+      if (t < 1) this.reelRaf = requestAnimationFrame(step); else done();
+    };
+    cancelAnimationFrame(this.reelRaf); this.reelRaf = requestAnimationFrame(step);
+  }
+  reelCollapseNow() {
+    if (!this.state.reelOpen || this.reelBusy) return;
+    const box = this.reelBoxRef.current, ov = this.reelOverRef.current, v = this.reelVidRef.current;
+    if (v) { v.muted = true; v.loop = true; v.play().catch(() => {}); }
+    if (box) {
+      const { c, o } = this.reelSizes(), above = box.getBoundingClientRect().top < 0;
+      box.style.transition = "none"; box.style.height = c + "px";
+      if (above) window.scrollTo({ top: scrollY - (o - c), behavior: "instant" });
+    }
+    if (ov) { ov.style.transition = "none"; ov.style.opacity = "1"; ov.style.pointerEvents = "auto"; }
+    this.setState({ reelOpen: false });
+  }
+  openReel() {
+    if (this.reelBusy || this.state.reelOpen) return;
+    const v = this.reelVidRef.current; this.reelBusy = true;
+    document.querySelectorAll("video[controls]").forEach(x => { if (x !== v) x.pause(); });
+    if (v) v.loop = false;
+    this.reelAnim(true, () => {
+      this.reelBusy = false;
+      this.setState({ reelOpen: true, btsPlay: -1 });
+      if (v) { v.currentTime = 0; v.muted = false; v.play().catch(() => { v.muted = true; v.play(); }); }
+    });
+  }
+  reelEnded() {
+    if (!this.state.reelOpen || this.reelBusy) return;
+    const v = this.reelVidRef.current; this.reelBusy = true;
+    if (v) { v.muted = true; v.loop = true; v.play().catch(() => {}); }
+    this.reelAnim(false, () => { this.reelBusy = false; this.setState({ reelOpen: false }); });
+  }
+  btsBackRef = React.createRef(); btsBoxRef = React.createRef(); btsBigVidRef = React.createRef();
+  btsCenter() { const { W, H } = this.vp(); let w = Math.min(W * 0.86, 1600), hh = w * 9 / 16; const mh = H * 0.82; if (hh > mh) { hh = mh; w = hh * 16 / 9; } return { l: (W - w) / 2, t: (H - hh) / 2, w, h: hh }; }
+  openBts(i, btn) {
+    if (this.state.btsBig != null && this.state.btsBig >= 0) return;
+    document.querySelectorAll("video[controls]").forEach(v => v.pause());
+    const r = btn.getBoundingClientRect(), from = { l: r.left, t: r.top, w: r.width, h: r.height };
+    this.btsFrom = btn; this.btsY = scrollY;
+    this.setState({ btsBig: i, btsHover: -1 }, () => {
+      const box = this.btsBoxRef.current, back = this.btsBackRef.current; if (!box) return;
+      Object.assign(box.style, { left: from.l + "px", top: from.t + "px", width: from.w + "px", height: from.h + "px" });
+      if (back) { back.style.transition = "opacity 0.6s ease-in-out"; requestAnimationFrame(() => (back.style.opacity = "0.94")); }
+      this.animRect(box, from, this.btsCenter(), 750);
+    });
+  }
+  closeBts() {
+    if (this.state.btsBig == null || this.state.btsBig < 0 || this.btsClosing) return;
+    const box = this.btsBoxRef.current, back = this.btsBackRef.current, v = this.btsBigVidRef.current;
+    if (!box) return this.setState({ btsBig: -1 });
+    this.btsClosing = true; if (v) v.pause();
+    const r = box.getBoundingClientRect(), from = { l: r.left, t: r.top, w: r.width, h: r.height };
+    const tr = this.btsFrom && this.btsFrom.isConnected ? this.btsFrom.getBoundingClientRect() : null;
+    const { H } = this.vp(), vis = tr && tr.bottom > 0 && tr.top < H;
+    const to = vis ? { l: tr.left, t: tr.top, w: tr.width, h: tr.height } : this.centerRect(from);
+    if (back) back.style.opacity = "0";
+    this.animRect(box, from, to, 650, () => { this.btsClosing = false; this.setState({ btsBig: -1 }); }, vis ? null : [1, 0]);
   }
   btsWrapRef = React.createRef();
   btsGridRef = React.createRef();
@@ -449,40 +553,71 @@ class Component extends DCLogic {
       this.btsTimer2 = setTimeout(() => this.setState({ btsH: null }), 1500);
     }
   }
+  animRect(el, from, to, dur, done, op) {
+    const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    cancelAnimationFrame(el._raf); el._to = to; let t0 = null;
+    const step = now => {
+      if (t0 == null) t0 = now;
+      const T = el._to, t = Math.min(1, (now - t0) / dur), k = ease(t), L = (a, b) => a + (b - a) * k;
+      el.style.left = L(from.l, T.l) + "px"; el.style.top = L(from.t, T.t) + "px";
+      el.style.width = L(from.w, T.w) + "px"; el.style.height = L(from.h, T.h) + "px";
+      if (op) el.style.opacity = String(L(op[0], op[1]));
+      if (t < 1) el._raf = requestAnimationFrame(step); else if (done) done();
+    };
+    el._raf = requestAnimationFrame(step);
+  }
+  backRef = React.createRef(); dialogRef = React.createRef(); veilRef = React.createRef();
+  fullRect() { const { W, H } = this.vp(); return { l: 0, t: 0, w: W, h: H }; }
   setActive(i) {
-    const EASE = "cubic-bezier(0.65,0,0.35,1)", MOVE = 700;
+    const MOVE = 800;
     const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.clearTimers();
     const seq = (this.seq = (this.seq || 0) + 1), live = () => this.seq === seq;
     if (i < 0) {
       const a = this.state.active; if (a < 0) return;
       const tile = this.tileRect(a);
-      this.setState({ cOp: 0 });
-      if (reduce) { this.setState({ shown: false }); this.later(() => this.setState({ active: -1, hover: -1 }), 400); return; }
+      if (reduce) { this.setState({ shown: false, cOp: 0 }); this.later(() => this.setState({ active: -1, hover: -1 }), 400); return; }
       const ar = tile ? tile.w / tile.h : 16 / 9;
-      const to = this.fit(this.targetRect(), ar);
-      const f = this.placeFly(this.img(this.data[a].thumb), to);
-      f.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, easing: "ease-out" }).finished.then(() => {
+      const from = this.fit(this.targetRect(), ar);
+      const f = this.placeFly(this.img(this.data[a].thumb), from);
+      const dlg = this.dialogRef.current, back = this.backRef.current;
+      document.querySelectorAll('[role="dialog"] video').forEach(v => v.pause());
+      const fade = dlg ? dlg.animate({ opacity: [1, 0] }, { duration: 300, easing: "ease-in-out", fill: "forwards" }).finished : Promise.resolve();
+      fade.then(() => {
         if (!live()) return;
-        this.setState({ shown: false, mediaReady: false });
-        const end = tile ? [{ transform: "none" }, { transform: this.xf(tile, to) }]
-                         : [{ transform: "none", opacity: 1 }, { transform: `translate(${to.w * 0.25}px, ${to.h * 0.25}px) scale(0.5)`, opacity: 0 }];
-        return f.animate(end, { duration: MOVE, easing: EASE, fill: "forwards" }).finished;
-      }).then(() => { if (!live()) return; this.setState({ active: -1, hover: -1 }); requestAnimationFrame(() => this.hideFly()); }).catch(() => {});
+        if (dlg) dlg.style.visibility = "hidden";
+        if (back) { back.style.transition = "opacity 0.7s ease-in-out"; back.style.opacity = "0"; }
+        const to = tile || this.centerRect(from);
+        this.animRect(f, from, to, MOVE, () => {
+          if (!live()) return;
+          this.setState({ active: -1, hover: -1, shown: false, mediaReady: false, cOp: 0 }, () => { if (dlg) { dlg.getAnimations().forEach(x => x.cancel()); dlg.style.visibility = ""; } });
+          requestAnimationFrame(() => this.hideFly());
+        }, tile ? null : [1, 0]);
+      }).catch(() => {});
     } else if (this.state.active < 0) {
       document.querySelectorAll("video[controls]").forEach(v => v.pause());
       const tile = reduce ? null : this.tileRect(i);
-      this.setState({ active: i, shown: false, cOp: 0, mediaReady: !tile, btsPlay: -1, btsHover: -1 }, () => {
-        if (!tile) { requestAnimationFrame(() => this.setState({ shown: true, cOp: 1, mediaReady: true })); return; }
-        const to = this.fit(this.targetRect(), tile.w / tile.h);
-        const f = this.placeFly(this.img(this.data[i].thumb), to);
-        const anim = f.animate([{ transform: this.xf(tile, to) }, { transform: "none" }], { duration: MOVE, easing: EASE, fill: "both" });
-        anim.ready.then(() => live() && this.setState({ shown: true }));
-        anim.finished.then(() => {
-          if (!live()) return;
-          this.setState({ cOp: 1, mediaReady: true });
-          return f.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, delay: 500, easing: "ease-in-out", fill: "forwards" }).finished;
-        }).then(() => live() && this.hideFly()).catch(() => {});
+      if (!tile) { this.setState({ active: i, shown: true, cOp: 1, mediaReady: true, btsPlay: -1, btsHover: -1 }); return; }
+      const { W } = this.vp(), key = i + ":" + W; this.tCache = this.tCache || {};
+      const guess = this.tCache[key] || (this.tLast && this.tLast.W === W ? this.fit(this.tLast.box, tile.w / tile.h) : (() => { const sb = Math.max(0, innerWidth - W) || 15, cw = W - sb - 64, w = cw * 0.8; return this.fit({ l: 32 + (cw - w) / 2, t: 223, w, h: w * 9 / 16 }, tile.w / tile.h); })());
+      const f = this.placeFly(this.img(this.data[i].thumb), tile), veil = this.veilRef.current;
+      if (veil) { veil.style.transition = "opacity 0.7s ease-in-out"; veil.style.visibility = "visible"; requestAnimationFrame(() => (veil.style.opacity = "1")); }
+      this.animRect(f, tile, guess, MOVE, () => {
+        if (!live()) return;
+        this.setState({ active: i, shown: true, cOp: 0, mediaReady: false, btsPlay: -1, btsHover: -1 }, () => {
+          const back = this.backRef.current; if (back) { back.style.transition = "none"; back.style.opacity = "1"; }
+          if (veil) { veil.style.transition = "none"; veil.style.opacity = "0"; veil.style.visibility = "hidden"; }
+          const box = this.targetRect(), real = this.fit(box, tile.w / tile.h);
+          this.tCache[key] = real; this.tLast = { W, box };
+          const off = Math.abs(real.l - guess.l) + Math.abs(real.t - guess.t) + Math.abs(real.w - guess.w);
+          const land = () => {
+            this.setState({ cOp: 1 });
+            this.later(() => live() && this.setState({ mediaReady: true }), 450);
+            f.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, delay: 750, easing: "ease-in-out", fill: "forwards" }).finished
+              .then(() => live() && this.hideFly()).catch(() => {});
+          };
+          if (off > 2) this.animRect(f, guess, real, 320, () => live() && land()); else land();
+        });
       });
     } else {
       this.setState({ swapOp: 0 });
@@ -491,7 +626,8 @@ class Component extends DCLogic {
         this.setState({ active: i, hover: -1, mediaReady: true }, () => requestAnimationFrame(() => requestAnimationFrame(() => live() && this.setState({ swapOp: 1 }))));
       }, 350);
     }
-    try { history.replaceState(null, "", i >= 0 ? "#" + this.data[i].slug : "#work"); } catch (e) {}
+    const url = i >= 0 ? "#" + this.data[i].slug : "#work";
+    this.later(() => { try { history.replaceState(null, "", url); } catch (e) {} }, 2200);
   }
   step(d) {
     const n = this.data.length;
@@ -526,13 +662,18 @@ class Component extends DCLogic {
     const reelVals = { reelIsVideo: !!reel.mp4, reelIsFrame: !reel.mp4, reelSrc: reel.mp4 ? this.mp4(reel.mp4) : this.vimeo(reel.id), reelPoster: reel.mp4 ? this.img(reel.mp4) : "" };
     return {
       reels: this.reels.map((r, i) => ({ title: r.title, bg: i === this.state.reel ? "var(--color-accent)" : "transparent", fg: i === this.state.reel ? "var(--color-bg)" : "var(--color-text)", select: () => this.setState({ reel: i }) })),
-      ...reelVals, reelTitle: reel.title, multiReel: this.reels.length > 1,
-      projects, workRef: this.workRef,
+      ...reelVals, reelTitle: reel.title,
+      reelBoxRef: this.reelBoxRef, reelVidRef: this.reelVidRef, reelOverRef: this.reelOverRef, reelOpen: !!this.state.reelOpen,
+      openReel: () => this.openReel(), reelEnded: () => this.reelEnded(), multiReel: this.reels.length > 1,
+      projects, workRef: this.workRef, introRef: this.introRef,
       ...this.btsVals(hoverOn),
+      ...(() => { const k = this.state.btsBig ?? -1, b = k >= 0 ? this.btsData[k] : null;
+        return { btsBigOn: !!b, btsBigSrc: b ? this.mp4(b.file) : "", btsBigPoster: b ? this.img(b.file) : "", btsBigTitle: b ? b.title : "",
+          btsBackRef: this.btsBackRef, btsBoxRef: this.btsBoxRef, btsBigVidRef: this.btsBigVidRef, closeBts: () => this.closeBts() }; })(),
       projectCount: String(projects.length).padStart(2, "0"),
       gridCols: `repeat(auto-fill,minmax(min(100%,${Math.round(1200 / cols)}px),1fr))`,
-      hasActive: !!a, modalOpacity: this.state.shown ? 1 : 0, mediaRef: this.mediaRef,
-      cOp: this.state.cOp ?? 1, swapOp: this.state.swapOp ?? 1, cY: (this.state.cOp ?? 1) ? "0px" : "16px",
+      hasActive: !!a, modalOpacity: this.state.shown ? 1 : 0, mediaRef: this.mediaRef, backRef: this.backRef, dialogRef: this.dialogRef, veilRef: this.veilRef,
+      cOp: this.state.cOp ?? 1, swapOp: this.state.swapOp ?? 1, cY: "0px",
       cDelayH: (this.state.cOp ?? 1) ? "0.15s" : "0s", cDelayA: "0s",
       flyRef: this.flyRef,
       active: a || {},
