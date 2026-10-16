@@ -132,36 +132,9 @@ a:hover{color:var(--color-accent-600)}
     <h2 style="margin:0;font-size:32px">Behind the scenes</h2>
     <span style="font-size:13px;color:var(--color-neutral-700)">Edited by Nguyen Tran</span>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));border-top:2px solid var(--color-divider)">
-    <sc-for list="{{ bts }}" as="b" hint-placeholder-count="4">
-      <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
-        <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
-          <sc-if value="{{ b.playing }}" hint-placeholder-val="{{ false }}">
-            <video key="{{ b.key }}" src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" onPlay="{{ b.onPlay }}" onEnded="{{ b.stop }}" ref="{{ b.fadeIn }}" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
-          </sc-if>
-          <sc-if value="{{ b.idle }}" hint-placeholder-val="{{ true }}">
-            <button onClick="{{ b.play }}" aria-label="Play {{ b.title }}" style="all:unset;position:absolute;inset:0;cursor:pointer" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
-              <img src="{{ b.poster }}" alt="{{ b.title }}, behind the scenes edited by Nguyen Tran" loading="lazy" decoding="async" width="1280" height="720" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-              <sc-if value="{{ b.mount }}" hint-placeholder-val="{{ false }}">
-                <video src="{{ b.src }}" autoPlay="true" muted="true" loop="true" playsInline="true" tabindex="-1" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none"></video>
-              </sc-if>
-              <span style="position:absolute;left:var(--space-3);bottom:var(--space-3);padding:var(--space-1) var(--space-2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:var(--color-accent);color:var(--color-bg)">Play with sound</span>
-            </button>
-          </sc-if>
-        </div>
-        <div style="display:flex;justify-content:space-between;gap:var(--space-3);font-size:12px;color:var(--color-neutral-700);font-variant-numeric:tabular-nums">
-          <span style="color:var(--color-accent-700)">{{ b.num }}</span>
-          <span>{{ b.year }}</span>
-        </div>
-        <h3 style="margin:0;font-size:20px;line-height:1.15">{{ b.title }}</h3>
-        <figcaption style="margin:0;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-neutral-700)">{{ b.meta }}</figcaption>
-      </figure>
-    </sc-for>
-  </div>
-  <sc-if value="{{ hasBtsExtra }}" hint-placeholder-val="{{ true }}">
-  <div ref="{{ btsExtraRef }}" style="height:{{ btsH }};overflow:hidden;--bts-fade:{{ btsFade }};transition:height 1.4s cubic-bezier(0.65,0,0.35,1), --bts-fade 0.7s ease-in-out;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%)">
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))">
-    <sc-for list="{{ btsExtra }}" as="b" hint-placeholder-count="0">
+  <div ref="{{ btsWrapRef }}" style="height:{{ btsH }};overflow:hidden;--bts-fade:{{ btsFade }};transition:height 1.4s cubic-bezier(0.65,0,0.35,1), --bts-fade 0.7s ease-in-out;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);border-top:2px solid var(--color-divider)">
+  <div ref="{{ btsGridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))">
+    <sc-for list="{{ bts }}" as="b" hint-placeholder-count="6">
       <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="opacity:{{ b.op }};transform:scale({{ b.sc }});transform-origin:50% 0;transition:opacity 0.7s ease-in-out {{ b.delay }}, transform 0.9s cubic-bezier(0.65,0,0.35,1) {{ b.delay }}, background 0.2s;margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
         <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
           <sc-if value="{{ b.playing }}" hint-placeholder-val="{{ false }}">
@@ -187,6 +160,7 @@ a:hover{color:var(--color-accent-600)}
     </sc-for>
   </div>
   </div>
+  <sc-if value="{{ hasBtsMore }}" hint-placeholder-val="{{ true }}">
   <div style="display:flex;padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider)">
     <button class="btn btn-secondary" onClick="{{ toggleBts }}" aria-expanded="{{ btsOpenStr }}">{{ btsLabel }}</button>
   </div>
@@ -361,6 +335,7 @@ class Component extends DCLogic {
       notes: [], credits: [["Director", "Nguyen Tran"], ["DOP", "Nguyen Tran"], ["Editor/Colorist", "Nguyen Tran"]] }
   ];
   componentDidMount() {
+    this.btsRO = new ResizeObserver(() => this.btsLayout()); if (this.btsGridRef.current) this.btsRO.observe(this.btsGridRef.current); requestAnimationFrame(() => this.btsLayout());
     this.onKey = e => {
       if (this.state.active < 0) return;
       if (e.key === "Escape") this.setActive(-1);
@@ -382,7 +357,7 @@ class Component extends DCLogic {
     if (i >= 0) this.setActive(i);
   }
   workRef = React.createRef();
-  componentWillUnmount() { this.clearTimers(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
+  componentWillUnmount() { this.clearTimers(); if (this.btsRO) this.btsRO.disconnect(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
   mediaRef = React.createRef();
   vp() { const d = document.documentElement; return { W: d.clientWidth, H: d.clientHeight }; }
   tileRect(i) {
@@ -410,7 +385,6 @@ class Component extends DCLogic {
   later(fn, ms) { const t = setTimeout(fn, ms); (this.timers = this.timers || []).push(t); }
   clearTimers() { (this.timers || []).forEach(clearTimeout); this.timers = []; }
   fadeInRef = el => { if (el && el.animate) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, easing: "ease-in-out" }); };
-  btsExtraRef = React.createRef();
   btsItem(b, i, hoverOn) {
     const playing = this.state.btsPlay === i;
     return { ...b, num: String(i + 1).padStart(2, "0"), src: this.mp4(b.file), poster: this.img(b.file), fadeIn: this.fadeInRef,
@@ -421,37 +395,48 @@ class Component extends DCLogic {
       enter: () => this.setState({ btsHover: i }),
       leave: () => this.setState(s => (s.btsHover === i ? { btsHover: -1 } : null)) };
   }
+  btsWrapRef = React.createRef();
+  btsGridRef = React.createRef();
+  btsLayout() {
+    const g = this.btsGridRef.current, total = this.btsData.length;
+    if (!g) return;
+    const cols = Math.max(1, getComputedStyle(g).gridTemplateColumns.split(" ").filter(Boolean).length);
+    let n = cols >= total ? total : cols * Math.ceil(6 / cols); if (n > total) n = total;
+    const last = g.children[n - 1];
+    const ch = last ? Math.round(last.getBoundingClientRect().bottom - g.getBoundingClientRect().top) : 0;
+    if (cols !== this.state.btsCols || n !== this.state.btsN || ch !== this.state.btsCH) this.setState({ btsCols: cols, btsN: n, btsCH: ch });
+  }
   btsVals(hoverOn) {
-    const N = 6, open = !!this.state.btsOpen, cols = this.state.btsCols || 3;
-    const extra = this.btsData.slice(N).map((b, j) => {
-      const row = Math.floor(j / cols), col = j % cols;
-      return { ...this.btsItem(b, j + N, hoverOn), op: open ? 1 : 0, sc: open ? 1 : 0.86,
-        delay: open ? (0.15 + row * 0.35 + col * 0.08).toFixed(2) + "s" : "0s" };
+    const total = this.btsData.length, open = !!this.state.btsOpen, cols = this.state.btsCols || 3;
+    const N = this.state.btsN ?? Math.min(6, total), more = N < total;
+    const items = this.btsData.map((b, i) => {
+      const k = i - N, hidden = k >= 0 && !open;
+      return { ...this.btsItem(b, i, hoverOn), op: hidden ? 0 : 1, sc: hidden ? 0.86 : 1,
+        delay: k >= 0 && open && this.state.btsAnim ? (0.15 + Math.floor(k / cols) * 0.35 + (k % cols) * 0.08).toFixed(2) + "s" : "0s" };
     });
-    const h = this.state.btsH;
+    const H = !more ? "auto" : this.state.btsH != null ? this.state.btsH : open ? "auto" : (this.state.btsCH ? this.state.btsCH + "px" : "auto");
     return {
-      bts: this.btsData.slice(0, N).map((b, i) => this.btsItem(b, i, hoverOn)),
-      btsExtra: extra, hasBtsExtra: extra.length > 0,
-      btsH: h == null ? "0px" : h, btsOpenStr: String(open),
+      bts: items, hasBtsMore: more, btsH: H, btsOpenStr: String(open),
       btsFade: this.state.btsAnim ? "220px" : "0px",
-      btsLabel: open ? "Show less" : `More behind the scenes (${extra.length})`,
-      btsExtraRef: this.btsExtraRef, toggleBts: () => this.toggleBts()
+      btsLabel: open ? "Show less" : `More behind the scenes (${total - N})`,
+      btsWrapRef: this.btsWrapRef, btsGridRef: this.btsGridRef, toggleBts: () => this.toggleBts()
     };
   }
   toggleBts() {
-    const el = this.btsExtraRef.current; if (!el) return;
+    const g = this.btsGridRef.current; if (!g) return;
     clearTimeout(this.btsTimer); clearTimeout(this.btsTimer2);
-    const full = el.scrollHeight;
+    const full = g.scrollHeight, ch = this.state.btsCH;
     if (!this.state.btsOpen) {
-      const cols = Math.max(1, Math.floor(el.clientWidth / 400));
-      this.setState({ btsOpen: true, btsAnim: true, btsH: full + "px", btsCols: cols });
+      this.setState({ btsH: ch + "px" });
+      requestAnimationFrame(() => this.setState({ btsOpen: true, btsAnim: true, btsH: full + "px" }));
       this.btsTimer = setTimeout(() => this.setState({ btsAnim: false }), 1000);
-      this.btsTimer2 = setTimeout(() => this.setState({ btsH: "auto" }), 1750);
+      this.btsTimer2 = setTimeout(() => this.setState({ btsH: null }), 1750);
     } else {
-      if (this.state.btsPlay >= 6) this.setState({ btsPlay: -1 });
+      if (this.state.btsPlay >= (this.state.btsN ?? 6)) this.setState({ btsPlay: -1 });
       this.setState({ btsH: full + "px", btsAnim: true });
-      requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ btsOpen: false, btsH: "0px" })));
-      this.btsTimer = setTimeout(() => this.setState({ btsAnim: false }), 1500);
+      requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ btsOpen: false, btsH: ch + "px" })));
+      this.btsTimer = setTimeout(() => this.setState({ btsAnim: false }), 1000);
+      this.btsTimer2 = setTimeout(() => this.setState({ btsH: null }), 1500);
     }
   }
   setActive(i) {
