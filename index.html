@@ -97,7 +97,7 @@ a:hover{color:var(--color-accent-600)}
     <h2 style="margin:0;font-size:32px">Selected work</h2>
     <span style="font-size:13px;color:var(--color-neutral-700)">{{ projectCount }} projects · hover to preview</span>
   </div>
-  <div style="display:grid;grid-template-columns:{{ gridCols }};border-top:2px solid var(--color-divider)">
+  <div style="display:grid;grid-template-columns:{{ gridCols }};border-top:2px solid var(--color-divider);margin-bottom:-2px">
     <sc-for list="{{ projects }}" as="p" hint-placeholder-count="9">
       <a href="{{ p.href }}" onClick="{{ p.open }}" onMouseEnter="{{ p.enter }}" onMouseLeave="{{ p.leave }}" onFocus="{{ p.enter }}" onBlur="{{ p.leave }}" style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);margin-right:-2px;color:var(--color-text);text-decoration:none" style-hover="background:var(--color-surface);color:var(--color-text)" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
         <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
@@ -132,7 +132,7 @@ a:hover{color:var(--color-accent-600)}
     <h2 style="margin:0;font-size:32px">Behind the scenes</h2>
     <span style="font-size:13px;color:var(--color-neutral-700)">Edited by Nguyen Tran</span>
   </div>
-  <div ref="{{ btsWrapRef }}" style="height:{{ btsH }};overflow:hidden;--bts-fade:{{ btsFade }};transition:height 1.4s cubic-bezier(0.65,0,0.35,1), --bts-fade 0.7s ease-in-out;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);border-top:2px solid var(--color-divider)">
+  <div ref="{{ btsWrapRef }}" style="margin-bottom:-2px;height:{{ btsH }};overflow:hidden;--bts-fade:{{ btsFade }};transition:height 1.4s cubic-bezier(0.65,0,0.35,1), --bts-fade 0.7s ease-in-out;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--bts-fade)),transparent 100%);border-top:2px solid var(--color-divider)">
   <div ref="{{ btsGridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))">
     <sc-for list="{{ bts }}" as="b" hint-placeholder-count="6">
       <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="opacity:{{ b.op }};transform:scale({{ b.sc }});transform-origin:50% 0;transition:opacity 0.7s ease-in-out {{ b.delay }}, transform 0.9s cubic-bezier(0.65,0,0.35,1) {{ b.delay }}, background 0.2s;margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
@@ -161,21 +161,31 @@ a:hover{color:var(--color-accent-600)}
   </div>
   </div>
   <sc-if value="{{ hasBtsMore }}" hint-placeholder-val="{{ true }}">
-  <div style="display:flex;padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider)">
+  <div style="position:relative;display:flex;padding:var(--space-6) var(--space-8);border-top:2px solid var(--color-divider)">
     <button class="btn btn-secondary" onClick="{{ toggleBts }}" aria-expanded="{{ btsOpenStr }}">{{ btsLabel }}</button>
   </div>
   </sc-if>
 </section>
 
-<section id="about" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));border-bottom:2px solid var(--color-divider);scroll-margin-top:64px">
-  <div style="padding:48px var(--space-8)">
+<section id="about" style="display:flex;flex-wrap:wrap;border-bottom:2px solid var(--color-divider);scroll-margin-top:64px">
+  <div style="padding:64px clamp(32px,6vw,112px);flex:1 1 440px;max-width:440px;box-sizing:content-box">
     <h2 style="margin:0 0 var(--space-2);font-size:32px">About</h2>
     <div style="font-size:14px;color:var(--color-neutral-700)">Nguyen T.P. or nguyntp<br>Offline Editor &amp; Filmmaker — Saigon, Vietnam</div>
-    <div style="position:relative;width:100%;max-width:360px;aspect-ratio:4/5;margin-top:var(--space-6);background:var(--color-surface)">
+    <div style="position:relative;width:100%;aspect-ratio:4/5;margin-top:var(--space-6);background:var(--color-surface)">
       <img src="ntpssd/seo/nguyen-tran-offline-editor-saigon-portrait.webp?v=2" alt="Nguyen Tran, offline editor and filmmaker in Saigon, on set" loading="lazy" decoding="async" width="680" height="850" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
     </div>
+    <div style="display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-6);font-size:14px;font-weight:600">
+      <span style="width:8px;height:8px;background:var(--color-accent)"></span>Available for hire: freelance editor
+    </div>
+    <dl style="margin:var(--space-4) 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);border-top:2px solid var(--color-divider);font-size:14px">
+      <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Based in</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">Saigon, Vietnam</dd>
+      <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Focus</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">Offline edit for TVC, social, short film</dd>
+      <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Also</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">Online edit, color, VFX comp</dd>
+      <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">NLE</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">DaVinci Resolve, Premiere Pro</dd>
+    </dl>
+    <a href="mailto:djnguyentran@gmail.com?subject=Freelance%20edit%20enquiry" class="btn" style="margin:var(--space-6) auto 0;display:flex;width:fit-content;justify-content:center;text-decoration:none;border-radius:10px;background:oklch(0.9 0.07 205);color:var(--color-text);border:2px solid oklch(0.9 0.07 205)" style-hover="background:oklch(0.84 0.09 205);border-color:oklch(0.84 0.09 205);color:var(--color-text)" style-active="background:oklch(0.78 0.1 205);border-color:oklch(0.78 0.1 205)">Book me for an edit</a>
   </div>
-  <div style="padding:48px var(--space-8);border-left:2px solid var(--color-divider);display:flex;flex-direction:column;gap:var(--space-4)">
+  <div style="padding:64px clamp(32px,7vw,144px);border-left:2px solid var(--color-divider);display:flex;flex-direction:column;gap:var(--space-6);flex:999 1 420px;min-width:0;box-sizing:border-box">
     <p style="margin:0;font-size:19px;line-height:1.5;text-wrap:pretty;max-width:56ch">Trusted by leading brands including Coca-Cola, Tiger, and Jules.</p>
     <p style="margin:0;font-size:16px;line-height:1.6;text-wrap:pretty;max-width:60ch">I craft story structure, pacing, and emotional arc, turning raw footage into cuts that hold attention and drive results. Cinematography and color grading are my foundation, but editing is where I shape the final experience: I don't just cut frames, I build Audience Retention.</p>
     <p style="margin:0;font-size:16px;line-height:1.6;text-wrap:pretty;max-width:60ch">With production-house experience spanning pre-production planning to on-set roles like DIT, Colorist, and PA, I bring a full-picture understanding of how a project comes together, and how to edit it with that context in mind.</p>
@@ -199,13 +209,13 @@ a:hover{color:var(--color-accent-600)}
   </div>
 </section>
 
-<section id="contact" style="background:var(--color-accent);color:var(--color-bg);padding:64px var(--space-8);scroll-margin-top:64px">
+<section id="contact" style="background:var(--color-bg);color:var(--color-text);padding:64px var(--space-8);scroll-margin-top:64px">
   <div style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:var(--space-4)">Contact</div>
-  <a href="mailto:djnguyentran@gmail.com" style="display:block;font-family:var(--font-heading);font-weight:800;font-size:clamp(32px,6.4vw,92px);line-height:1;letter-spacing:-0.03em;color:var(--color-bg);text-decoration:none;word-break:break-word" style-hover="text-decoration:underline;color:var(--color-bg)">djnguyentran@gmail.com</a>
+  <a href="mailto:djnguyentran@gmail.com" style="display:block;font-family:var(--font-heading);font-weight:800;font-size:clamp(32px,6.4vw,92px);line-height:1;letter-spacing:-0.03em;color:var(--color-text);text-decoration:none;word-break:break-word" style-hover="text-decoration:underline;color:var(--color-text)">djnguyentran@gmail.com</a>
   <div style="display:flex;gap:var(--space-6);flex-wrap:wrap;margin-top:var(--space-8);font-size:15px">
-    <a href="https://vimeo.com/user224678740" target="_blank" rel="noopener" style="color:var(--color-bg)" style-hover="color:var(--color-accent-100)">Vimeo</a>
-    <a href="https://www.youtube.com/@nguyntpdodp" target="_blank" rel="noopener" style="color:var(--color-bg)" style-hover="color:var(--color-accent-100)">YouTube</a>
-    <a href="https://www.instagram.com/r3ndervault" target="_blank" rel="noopener" style="color:var(--color-bg)" style-hover="color:var(--color-accent-100)">RenderVault</a>
+    <a href="https://vimeo.com/user224678740" target="_blank" rel="noopener" style="color:var(--color-text)" style-hover="color:oklch(0.42 0.045 215)">Vimeo</a>
+    <a href="https://www.youtube.com/@nguyntpdodp" target="_blank" rel="noopener" style="color:var(--color-text)" style-hover="color:oklch(0.42 0.045 215)">YouTube</a>
+    <a href="https://www.instagram.com/r3ndervault" target="_blank" rel="noopener" style="color:var(--color-text)" style-hover="color:oklch(0.42 0.045 215)">RenderVault</a>
   </div>
 </section>
 
