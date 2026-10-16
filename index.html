@@ -22,7 +22,7 @@
 <meta name="keywords" content="offline editor Vietnam, video editor Saigon, freelance editor Ho Chi Minh City, colorist DaVinci Resolve, commercial editor, TVC editor, cinematographer Saigon">
 <meta property="og:title" content="Nguyen Tran | Offline Editor &amp; Filmmaker | Saigon">
 <meta property="og:description" content="Commercials, social campaigns and short films, cut for structure, pacing and audience retention.">
-<meta property="og:image" content="https://nguyntp.github.io/ntpssd/seo/nguyen-tran-editors-reel-offline-editor-saigon.webp">
+<meta property="og:image" content="ntpssd/seo/nguyen-tran-editors-reel-offline-editor-saigon.webp">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="ntpssd/seo/nguyen-tran-nguyntp-logo.png">
@@ -80,7 +80,7 @@ a:hover{color:var(--color-accent-600)}
       </sc-for>
     </div></sc-if>
   </div>
-  <div style="position:relative;aspect-ratio:16/9;background:var(--color-neutral-900)">
+  <div style="position:relative;width:80%;margin:0 auto;aspect-ratio:16/9;background:var(--color-neutral-900)">
     <sc-if value="{{ reelIsFrame }}" hint-placeholder-val="{{ false }}">
       <iframe src="{{ reelSrc }}" title="{{ reelTitle }}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
     </sc-if>
@@ -135,7 +135,7 @@ a:hover{color:var(--color-accent-600)}
       <figure onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" style="margin:0 -2px 0 0;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-6);border-right:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)" style-hover="background:var(--color-surface)">
         <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--color-neutral-900)">
           <sc-if value="{{ b.playing }}" hint-placeholder-val="{{ false }}">
-            <video src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
+            <video key="{{ b.key }}" src="{{ b.src }}" poster="{{ b.poster }}" controls="true" autoPlay="true" onPlay="{{ b.onPlay }}" onEnded="{{ b.stop }}" playsInline="true" title="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;background:var(--color-neutral-900)"></video>
           </sc-if>
           <sc-if value="{{ b.idle }}" hint-placeholder-val="{{ true }}">
             <button onClick="{{ b.play }}" aria-label="Play {{ b.title }}" style="all:unset;position:absolute;inset:0;cursor:pointer" style-focus="outline:2px solid var(--color-accent);outline-offset:-2px">
@@ -214,7 +214,7 @@ a:hover{color:var(--color-accent-600)}
     <article style="padding:48px var(--space-8)">
       <div style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:var(--space-3)">{{ active.role }} · {{ active.year }}</div>
       <h2 style="margin:0 0 var(--space-8);font-size:clamp(40px,6vw,80px);line-height:0.95;letter-spacing:-0.03em">{{ active.title }}</h2>
-      <div style="display:grid;grid-template-columns:{{ mediaCols }};gap:var(--space-6)">
+      <div style="display:grid;grid-template-columns:{{ mediaCols }};gap:var(--space-6);width:80%;margin:0 auto">
         <sc-for list="{{ activeMedia }}" as="m" hint-placeholder-count="1">
           <figure style="margin:0">
             <div style="position:relative;aspect-ratio:{{ m.ratio }};background:var(--color-neutral-900)">
@@ -386,7 +386,9 @@ class Component extends DCLogic {
         const playing = this.state.btsPlay === i;
         return { ...b, num: String(i + 1).padStart(2, "0"), src: this.mp4(b.file), poster: this.img(b.file),
           playing, idle: !playing, mount: hoverOn && !playing && this.state.btsHover === i,
-          play: () => this.setState({ btsPlay: i, btsHover: -1 }),
+          key: "bts-" + i, play: () => this.setState({ btsPlay: i, btsHover: -1 }),
+          stop: () => this.setState(s => (s.btsPlay === i ? { btsPlay: -1 } : null)),
+          onPlay: e => { document.querySelectorAll("video[controls]").forEach(v => { if (v !== e.target) v.pause(); }); if (this.state.btsPlay !== i) this.setState({ btsPlay: i }); },
           enter: () => this.setState({ btsHover: i }),
           leave: () => this.setState(s => (s.btsHover === i ? { btsHover: -1 } : null)) };
       }),
