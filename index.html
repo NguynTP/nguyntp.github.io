@@ -11,7 +11,7 @@
 <meta property="og:description" content="Commercials, social campaigns and short films, cut for structure, pacing and audience retention.">
 <meta property="og:image" content="https://nguyntp.github.io/ntpssd/seo/nguyen-tran-editors-reel-offline-editor-saigon.webp">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="ntpssd/seo/nguyen-tran-nguyntp-logo.png">
+<link rel="icon" href="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-nguyntp-logo.png">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -22,10 +22,10 @@
 <meta name="keywords" content="offline editor Vietnam, video editor Saigon, freelance editor Ho Chi Minh City, colorist DaVinci Resolve, commercial editor, TVC editor, cinematographer Saigon">
 <meta property="og:title" content="Nguyen Tran | Offline Editor &amp; Filmmaker | Saigon">
 <meta property="og:description" content="Commercials, social campaigns and short films, cut for structure, pacing and audience retention.">
-<meta property="og:image" content="ntpssd/seo/nguyen-tran-editors-reel-offline-editor-saigon.webp">
+<meta property="og:image" content="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-editors-reel-offline-editor-saigon.webp">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="ntpssd/seo/nguyen-tran-nguyntp-logo.png">
+<link rel="icon" href="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-nguyntp-logo.png">
 <link rel="preconnect" href="https://player.vimeo.com">
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Nguyen Tran","alternateName":"nguyntp","jobTitle":"Offline Editor","address":{"@type":"PostalAddress","addressLocality":"Ho Chi Minh City","addressCountry":"VN"},"email":"mailto:djnguyentran@gmail.com","sameAs":["https://vimeo.com/user224678740","https://www.youtube.com/@nguyntpdodp","https://www.instagram.com/r3ndervault"]}</script>
@@ -43,7 +43,7 @@ a:hover{color:var(--color-accent-600)}
 
 <nav style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:var(--space-6);padding:var(--space-3) var(--space-8);background:var(--color-bg);border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
   <a href="#top" style="display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-heading);font-weight:800;font-size:18px;color:var(--color-text);text-decoration:none;margin-right:auto">
-    <img src="ntpssd/seo/nguyen-tran-nguyntp-logo.png" alt="nguyntp logo" width="32" height="32" style="width:32px;height:32px">
+    <img src="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-nguyntp-logo.png" alt="nguyntp logo" width="32" height="32" style="width:32px;height:32px">
     <span>Nguyen Tran</span>
   </a>
   <div style="display:flex;gap:var(--space-6);font-size:14px">
@@ -165,7 +165,7 @@ a:hover{color:var(--color-accent-600)}
     <h2 style="margin:0 0 var(--space-2);font-size:32px">About</h2>
     <div style="font-size:14px;color:var(--color-neutral-700)">Nguyen T.P. or nguyntp<br>Offline Editor &amp; Filmmaker — Saigon, Vietnam</div>
     <div style="position:relative;width:100%;aspect-ratio:4/5;margin-top:var(--space-6);background:var(--color-surface)">
-      <img src="ntpssd/seo/nguyen-tran-offline-editor-saigon-portrait.webp?v=2" alt="Nguyen Tran, offline editor and filmmaker in Saigon, on set" loading="lazy" decoding="async" width="680" height="850" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <img src="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-offline-editor-saigon-portrait.webp?v=2" alt="Nguyen Tran, offline editor and filmmaker in Saigon, on set" loading="lazy" decoding="async" width="680" height="850" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
     </div>
     <div style="display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-6);font-size:14px;font-weight:600">
       <span style="width:8px;height:8px;background:var(--color-accent)"></span>Available for hire: freelance editor
@@ -284,14 +284,17 @@ a:hover{color:var(--color-accent-600)}
 <script type="text/x-dc" data-dc-script data-props="{&quot;columns&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[2,3,4],&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;},&quot;hoverPreview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   state = { active: -1, hover: -1, reel: 0, preload: false, btsHover: -1, btsPlay: -1 };
-  img = n => "ntpssd/seo/" + n + ".webp";
+  // Media host. Set to your R2 public URL (e.g. "https://media.nguyentran.com/") to serve videos/images from R2; "" = from this repo.
+  MEDIA = "https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/";
+  M = () => (this.MEDIA ? this.MEDIA.replace(/\/?$/, "/") : "https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/");
+  img = n => this.M() + n + ".webp";
   vimeo = (id, q = "") => `https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0&badge=0&dnt=1${q}`;
   ccv = id => `https://www-ccv.adobe.io/v1/player/ccv/${id}/embed?bgcolor=%23191919&lazyLoading=true&api_key=BehancePro2View`;
-  mp4 = n => "ntpssd/seo/" + n + "-720p.mp4";
+  mp4 = n => this.M() + n + "-720p.mp4";
   // Add a file's base name here once its -1080p.mp4 is in ntpssd/seo/; large screens use it, small screens keep 720p.
   hd1080 = new Set([]);
   bigScreen = typeof window !== "undefined" && window.matchMedia && matchMedia("(min-width: 1024px)").matches;
-  mp4Player = n => (this.bigScreen && this.hd1080.has(n) ? "ntpssd/seo/" + n + "-1080p.mp4" : this.mp4(n));
+  mp4Player = n => (this.bigScreen && this.hd1080.has(n) ? this.M() + n + "-1080p.mp4" : this.mp4(n));
   reels = [
     { title: "Editor's Reel", mp4: "nguyen-tran-editors-reel-offline-editor-saigon" }
   ];
