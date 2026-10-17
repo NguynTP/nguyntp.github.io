@@ -175,6 +175,7 @@ a:hover{color:var(--color-accent-600)}
       <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Focus</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">Offline edit for TVC, social, short film</dd>
       <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Also</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">Online edit, color, VFX comp</dd>
       <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">NLE</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">DaVinci Resolve, Premiere Pro</dd>
+      <dt style="padding:var(--space-3) var(--space-4) var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300);color:var(--color-neutral-700)">Off the clock</dt><dd style="margin:0;padding:var(--space-3) 0;border-bottom:1px solid var(--color-neutral-300)">I love F1, fav team Oracle Red Bull Racing</dd>
     </dl>
     <a href="mailto:djnguyentran@gmail.com?subject=Freelance%20edit%20enquiry" class="btn" style="margin:var(--space-6) auto 0;display:flex;width:fit-content;justify-content:center;text-decoration:none;border-radius:10px;background:oklch(0.9 0.07 205);color:var(--color-text);border:2px solid oklch(0.9 0.07 205)" style-hover="background:oklch(0.84 0.09 205);border-color:oklch(0.84 0.09 205);color:var(--color-text)" style-active="background:oklch(0.78 0.1 205);border-color:oklch(0.78 0.1 205)">Book me for an edit</a>
   </div>
@@ -418,6 +419,11 @@ class Component extends DCLogic {
     this.ntpSet = Array.from(document.querySelectorAll("video[data-player]"));
   }
   componentDidMount() {
+    this.onLockScroll = e => { if (this.animLock) e.preventDefault(); };
+    this.onLockKey = e => { if (this.animLock && [" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"].includes(e.key) && !(e.target.closest && e.target.closest("input,textarea"))) e.preventDefault(); };
+    window.addEventListener("wheel", this.onLockScroll, { passive: false });
+    window.addEventListener("touchmove", this.onLockScroll, { passive: false });
+    window.addEventListener("keydown", this.onLockKey, true);
     this.ntpScan();
     this.ntpMO = new MutationObserver(recs => {
       if (!recs.some(r => !(r.target.closest && r.target.closest("[data-ntp]")))) return;
@@ -458,7 +464,7 @@ class Component extends DCLogic {
     if (i >= 0) this.setActive(i);
   }
   workRef = React.createRef();
-  componentWillUnmount() { this.clearTimers(); if (this.ntpMO) this.ntpMO.disconnect(); window.removeEventListener("scroll", this.onBtsScroll); if (this.reelIO) this.reelIO.disconnect(); cancelAnimationFrame(this.reelRaf); document.removeEventListener("pointerdown", this.onDocDown, true); document.removeEventListener("play", this.onDocPlay, true); if (this.reelRO) this.reelRO.disconnect(); if (this.btsRO) this.btsRO.disconnect(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
+  componentWillUnmount() { this.clearTimers(); clearTimeout(this.lockT); window.removeEventListener("wheel", this.onLockScroll); window.removeEventListener("touchmove", this.onLockScroll); window.removeEventListener("keydown", this.onLockKey, true); if (this.ntpMO) this.ntpMO.disconnect(); window.removeEventListener("scroll", this.onBtsScroll); if (this.reelIO) this.reelIO.disconnect(); cancelAnimationFrame(this.reelRaf); document.removeEventListener("pointerdown", this.onDocDown, true); document.removeEventListener("play", this.onDocPlay, true); if (this.reelRO) this.reelRO.disconnect(); if (this.btsRO) this.btsRO.disconnect(); window.removeEventListener("keydown", this.onKey); if (this.io) this.io.disconnect(); clearTimeout(this.preloadTimer); }
   mediaRef = React.createRef();
   vp() { const d = document.documentElement; return { W: d.clientWidth, H: d.clientHeight }; }
   tileRect(i) {
@@ -481,7 +487,7 @@ class Component extends DCLogic {
   xf(from, to) { const s = from.w / to.w; return `translate(${from.l - to.l}px, ${from.t - to.t}px) scale(${s})`; }
   placeFly(src, r) { const f = this.flyRef.current; if (!f) return null; cancelAnimationFrame(f._raf); f.getAnimations().forEach(x => x.cancel()); if (f.getAttribute("src") !== src) f.src = src;
     Object.assign(f.style, { visibility: "visible", left: r.l + "px", top: r.t + "px", width: r.w + "px", height: r.h + "px", opacity: "1", transform: "none" }); return f; }
-  hideFly() { const f = this.flyRef.current; if (f) { f.getAnimations().forEach(a => a.cancel()); f.style.visibility = "hidden"; f.style.opacity = "0"; } }
+  hideFly() { this.animLock = false; const f = this.flyRef.current; if (f) { f.getAnimations().forEach(a => a.cancel()); f.style.visibility = "hidden"; f.style.opacity = "0"; } }
   centerRect(r) { const { W, H } = this.vp(); const w = r.w * 0.5, hh = r.h * 0.5; return { l: (W - w) / 2, t: (H - hh) / 2, w, h: hh }; }
   later(fn, ms) { const t = setTimeout(fn, ms); (this.timers = this.timers || []).push(t); }
   clearTimers() { (this.timers || []).forEach(clearTimeout); this.timers = []; }
@@ -637,15 +643,19 @@ class Component extends DCLogic {
   }
   backRef = React.createRef(); dialogRef = React.createRef(); veilRef = React.createRef();
   fullRect() { const { W, H } = this.vp(); return { l: 0, t: 0, w: W, h: H }; }
+  lockAnim(ms) { this.animLock = true; clearTimeout(this.lockT); this.lockT = setTimeout(() => (this.animLock = false), ms); }
   setActive(i) {
     const MOVE = 800;
+    this.animLock = false;
     const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.clearTimers();
     const seq = (this.seq = (this.seq || 0) + 1), live = () => this.seq === seq;
     if (i < 0) {
       const a = this.state.active; if (a < 0) return;
       const tile = this.tileRect(a);
-      if (reduce) { this.setState({ shown: false, cOp: 0 }); this.later(() => this.setState({ active: -1, hover: -1 }), 400); return; }
+      if (reduce) { this.setState({ shown: false, cOp: 0 }); return this.later(() => this.setState({ active: -1, hover: -1 }), 400); }
+      this.lockAnim(2600);
+      if (false) { this.setState({ shown: false, cOp: 0 }); this.later(() => this.setState({ active: -1, hover: -1 }), 400); return; }
       const ar = tile ? tile.w / tile.h : 16 / 9;
       const from = this.fit(this.targetRect(), ar);
       const f = this.placeFly(this.img(this.data[a].thumb), from);
@@ -667,6 +677,7 @@ class Component extends DCLogic {
       document.querySelectorAll("video[data-player=on]").forEach(v => v.pause());
       const tile = reduce ? null : this.tileRect(i);
       if (!tile) { this.setState({ active: i, shown: true, cOp: 1, mediaReady: true, btsPlay: -1, btsHover: -1 }); return; }
+      this.lockAnim(2600);
       const { W } = this.vp(), key = i + ":" + W; this.tCache = this.tCache || {};
       const guess = this.tCache[key] || (this.tLast && this.tLast.W === W ? this.fit(this.tLast.box, tile.w / tile.h) : (() => { const sb = Math.max(0, innerWidth - W) || 15, cw = W - sb - 64, w = cw * 0.8; return this.fit({ l: 32 + (cw - w) / 2, t: 223, w, h: w * 9 / 16 }, tile.w / tile.h); })());
       const f = this.placeFly(this.img(this.data[i].thumb), tile), veil = this.veilRef.current;
@@ -680,6 +691,11 @@ class Component extends DCLogic {
           this.tCache[key] = real; this.tLast = { W, box };
           const off = Math.abs(real.l - guess.l) + Math.abs(real.t - guess.t) + Math.abs(real.w - guess.w);
           const land = () => {
+            this.animLock = false;
+            const dlg = this.dialogRef.current;
+            if (dlg) { const onS = () => { dlg.removeEventListener("scroll", onS); if (f.style.visibility !== "visible") return; f.getAnimations().forEach(x => x.cancel());
+              f.animate([{ opacity: getComputedStyle(f).opacity }, { opacity: 0 }], { duration: 160, easing: "ease-out", fill: "forwards" }).finished.then(() => live() && this.hideFly()).catch(() => {}); };
+              dlg.addEventListener("scroll", onS, { passive: true }); }
             this.setState({ cOp: 1 });
             this.later(() => live() && this.setState({ mediaReady: true }), 450);
             f.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, delay: 750, easing: "ease-in-out", fill: "forwards" }).finished
