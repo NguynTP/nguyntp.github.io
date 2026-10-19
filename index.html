@@ -289,7 +289,8 @@ class Component extends DCLogic {
   MEDIA = "https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/";
   M = () => (this.MEDIA ? this.MEDIA.replace(/\/?$/, "/") : "https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/");
   img = n => this.M() + n + ".webp";
-  vimeo = (id, q = "") => `https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0&badge=0&dnt=1${q}`;
+  vHash = { 1237138095: "1d9128a360" };
+  vimeo = (id, q = "") => `https://player.vimeo.com/video/${id}?${this.vHash[id] ? "h=" + this.vHash[id] + "&" : ""}title=0&byline=0&portrait=0&badge=0&dnt=1${q}`;
   ccv = id => `https://www-ccv.adobe.io/v1/player/ccv/${id}/embed?bgcolor=%23191919&lazyLoading=true&api_key=BehancePro2View`;
   mp4 = n => this.M() + n + "-720p.mp4";
   // Add a file's base name here once its -1080p.mp4 is in ntpssd/seo/; large screens use it, small screens keep 720p.
@@ -310,6 +311,10 @@ class Component extends DCLogic {
     { title: "Philips Rush Hour BTS", year: "2025", meta: "Client: Philips · PH: 116 Pictures", file: "philips-rush-hour-tvc-behind-the-scenes-bts-editor-nguyen-tran" }
   ];
   data = [
+    { slug: "ptm-trailer", title: "PTM Trailer", role: "Offline/Online Editor", year: "2026",
+      thumb: "ptm-trailer-offline-online-editor-nguyen-tran", preview: { id: 1237138095, r: 16 / 9 },
+      media: [{ v: 1237138095, ratio: "16/9", label: "PTM Trailer" }],
+      notes: [], credits: [["Production house", "Luna Pictures"], ["Director", "Minh Nguyen"], ["DOP", "Marcel Mai"], ["Offline/Online Editor", "Nguyen Tran"], ["Colorist", "Minh Nguyen"]] },
     { slug: "kratingdaeng-x-eka-15s", title: "Kratingdaeng x Eka 15s", role: "Additional Offline Editor", year: "2026",
       thumb: "kratingdaeng-eka-15s-tvc-offline-editor-nguyen-tran", preview: { id: 1230499454, r: 16 / 9 },
       media: [{ v: 1230499454, ratio: "16/9", label: "Kratingdaeng x Eka — 15s" }],
