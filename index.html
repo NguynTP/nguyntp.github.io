@@ -31,6 +31,21 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="https://pub-616b16e87e0a4c969d3bade124211906.r2.dev/ntpssd/seo/nguyen-tran-nguyntp-logo.png">
 <script src="./support.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SC6CG6EJEQ"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','G-SC6CG6EJEQ');
+document.addEventListener('click',function(e){
+  var el=e.target.closest&&e.target.closest('a,button');if(!el)return;
+  var href=el.getAttribute('href')||'',txt=(el.textContent||'').trim().slice(0,60),lbl=el.getAttribute('aria-label')||'';
+  if(/book/i.test(txt))gtag('event','book_click',{link_text:txt});
+  else if(/^mailto:/.test(href))gtag('event','contact_email',{link_text:txt,location:el.closest('section,nav,header')?.id||''});
+  else if(/Play Editor/i.test(lbl))gtag('event','reel_play');
+  else if(/^#/.test(href)&&el.closest('#work'))gtag('event','project_open',{project:href.slice(1),project_title:txt.split('\n')[0]});
+  else if(el.closest('#bts')&&el.tagName==='BUTTON')gtag('event','bts_play',{item:txt});
+  else if(/^https?:/.test(href)&&href.indexOf(location.hostname)<0)gtag('event','outbound_click',{link_url:href,link_text:txt});
+},true);
+</script>
 </head>
 <body>
 <noscript><main><h1>Nguyen Tran — Offline Editor</h1><p>Saigon-based offline editor, cinematographer and colorist cutting commercials, social campaigns and short films.</p><h2>Selected work</h2><ul><li><a href="#ptm-trailer">PTM Trailer</a> (2026) — Offline/Online Editor</li><li><a href="#kratingdaeng-x-eka-15s">Kratingdaeng x Eka 15s</a> (2026) — Additional Offline Editor</li><li><a href="#tiger-credential">Tiger Credential 30s</a> (2026) — Offline Editor, Colorist</li><li><a href="#coke-meal-social">Coke Meal Social Campaign</a> (2026) — Editor</li><li><a href="#kinder-bueno">Kinder Bueno 6s</a> (2026) — Offline Editor</li><li><a href="#viet-dai-textile">Viet Dai Textile — Director's Cut</a> (2025) — Director, DOP, Editor, Colorist</li><li><a href="#womens-day-short-film">Women's Day Tribute Short Film</a> (2025) — DOP, Editor, Colorist, VFX Comp</li><li><a href="#pth-intro">PTH Logo Intro</a> (2025) — Director, DOP, Editor, Colorist</li><li><a href="#khan-teaser">KHAN — Short Film Teaser</a> (2024) — Director, Editor, DOP, Colorist</li><li><a href="#beanthere-cafe-ii-tvc">Beanthere Cafe II TVC</a> (2023) — Director, Editor, DOP, Colorist</li></ul><p>Contact: <a href="mailto:djnguyentran@gmail.com">djnguyentran@gmail.com</a></p></main></noscript>
